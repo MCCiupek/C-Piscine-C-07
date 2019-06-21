@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mciupek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/19 12:25:10 by mciupek           #+#    #+#             */
-/*   Updated: 2019/06/19 21:26:31 by mciupek          ###   ########.fr       */
+/*   Created: 2019/06/19 22:24:34 by mciupek           #+#    #+#             */
+/*   Updated: 2019/06/20 23:47:17 by mciupek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,29 +22,43 @@ int		ft_strlen(char *str)
 	return (i);
 }
 
-char	*ft_strcpy(char *dest, char *src)
+int		ft_strcat(char *dest, char *src, int start)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (src[i] != '\0')
 	{
-		dest[i] = src[i];
+		dest[start + i] = src[i];
 		i++;
 	}
-	dest[i] = '\0';
-	return (dest);
+	return (start + i);
 }
 
-char	*ft_strdup(char *src)
+char	*ft_strjoin(int size, char **strs, char *sep)
 {
-	char *tab;
+	char	*tab;
+	int		i;
+	int		len;
+	int		n;
 
-	tab = (char*)malloc(sizeof(*src) * (ft_strlen(src) + 1));
-	if (tab != NULL)
+	len = 0;
+	i = 0;
+	while (++i <= size)
+		len = len + ft_strlen(strs[i]);
+	if (!size)
+		tab = NULL;
+	if (!(tab = malloc(sizeof(*strs) *
+					(len + (size - 1) * ft_strlen(sep) + 1))))
+		tab = NULL;
+	i = 0;
+	n = 0;
+	while (++i <= size)
 	{
-		ft_strcpy(tab, src);
-		return (tab);
+		n = ft_strcat(tab, strs[i], n);
+		if (i != size)
+			n = ft_strcat(tab, sep, n);
 	}
-	return (NULL);
+	tab[n] = '\0';
+	return (tab);
 }
