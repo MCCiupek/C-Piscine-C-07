@@ -6,11 +6,11 @@
 /*   By: mciupek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/21 00:01:51 by mciupek           #+#    #+#             */
-/*   Updated: 2019/06/21 02:03:39 by mciupek          ###   ########.fr       */
+/*   Updated: 2019/06/21 13:35:36 by mciupek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	ft_putnbr_base(int nbr, char *base);
+char	*ft_putnbr_base(int nbr, char *base, int signe);
 
 int		ft_strstr(char *str, char to_find, int k)
 {
@@ -69,11 +69,11 @@ int		ft_spaces(char *str, char *base)
 	return (i);
 }
 
-int		ft_convert(char *str, char *base, int i, int b)
+long	ft_convert(char *str, char *base, int i, int b)
 {
 	int		len_nb;
 	int		b_pow;
-	int		nb;
+	long	nb;
 
 	len_nb = 0;
 	b_pow = 1;
@@ -93,22 +93,22 @@ char	*ft_convert_base(char *nbr, char *base_from, char *base_to)
 	int		i;
 	int		signe;
 	int		b;
-	int		nb;
-	char	*tab;
+	long	nb;
+	char	*nbr_char;
 
 	nb = 0;
 	i = ft_spaces(nbr, base_from);
-	signe = 1;
+	signe = 0;
 	b = ft_check_base(base_from);
 	if (b < 2 || i == -1)
 		return (0);
 	while (nbr[i] == '+' || nbr[i] == '-')
 	{
 		if (nbr[i] == '-')
-			signe = signe * -1;
+			signe++;
 		i++;
 	}
-	nb = signe * ft_convert(nbr, base_from, i, b);
-	tab = ft_putnbr_base(nb, base_to);
-	return (tab);
+	nb = ft_convert(nbr, base_from, i, b);
+	nbr_char = ft_putnbr_base(nb, base_to, signe % 2);
+	return (nbr_char);
 }
