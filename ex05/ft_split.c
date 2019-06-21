@@ -6,13 +6,11 @@
 /*   By: mciupek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/20 11:36:15 by mciupek           #+#    #+#             */
-/*   Updated: 2019/06/20 22:57:05 by mciupek          ###   ########.fr       */
+/*   Updated: 2019/06/21 15:00:42 by mciupek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 
 int		ft_is_charset(char *str, char to_find)
 {
@@ -61,6 +59,16 @@ int		ft_size(char *str, char *charset)
 	return (size_tab);
 }
 
+char	**ft_init_tab(int size)
+{
+	char **tab;
+
+	if (!(tab = malloc(sizeof(char *) * (size + 1))))
+		return (NULL);
+	tab[size] = NULL;
+	return (tab);
+}
+
 char	**ft_split(char *str, char *charset)
 {
 	int		i;
@@ -70,8 +78,7 @@ char	**ft_split(char *str, char *charset)
 
 	i = 0;
 	k = 0;
-	if (!(tab = malloc(sizeof(char) * (ft_size(str, charset) + 1))))
-		return (NULL);
+	tab = ft_init_tab(ft_size(str, charset));
 	while (str[i])
 	{
 		len = 0;
@@ -79,23 +86,14 @@ char	**ft_split(char *str, char *charset)
 			len++;
 		if (len)
 		{
-			if (!(tab[k] = malloc(sizeof(char) * (len + 1))))
+			if (!(tab[k] = (char*)malloc(sizeof(char) * (len + 1))))
 				return (NULL);
 			tab[k] = ft_strcpy(tab[k], str, i, i + len);
-			printf("%d. %s\n", k, tab[k]);
 			k++;
 		}
 		while (ft_is_charset(charset, str[i + len]))
 			i++;
 		i = i + len;
-		//printf("%d. %s\n", k, tab[k]);
-	}
-	tab[k] = NULL;
-	i = 0;
-	while (tab[i])
-	{
-		printf("%d. %s\n", i, tab[i]);
-		i++;
 	}
 	return (tab);
 }
