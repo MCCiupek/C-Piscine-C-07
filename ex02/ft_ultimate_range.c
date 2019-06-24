@@ -37,4 +37,3 @@ int		ft_ultimate_range(int **range, int min, int max)
 	}
 	return (-1);
 }
-

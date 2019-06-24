@@ -6,9 +6,12 @@
 /*   By: mciupek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/21 00:01:51 by mciupek           #+#    #+#             */
-/*   Updated: 2019/06/21 13:35:36 by mciupek          ###   ########.fr       */
+/*   Updated: 2019/06/24 11:27:58 by mciupek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <stdio.h>
+#include <stdlib.h>
 
 char	*ft_putnbr_base(int nbr, char *base, int signe);
 
@@ -100,6 +103,12 @@ char	*ft_convert_base(char *nbr, char *base_from, char *base_to)
 	i = ft_spaces(nbr, base_from);
 	signe = 0;
 	b = ft_check_base(base_from);
+	if (!nbr[0])
+	{
+		nbr_char = malloc(sizeof(char) * 1);
+		nbr_char[0] = base_to[0];
+		return (nbr_char);
+	}
 	if (b < 2 || i == -1)
 		return (0);
 	while (nbr[i] == '+' || nbr[i] == '-')
