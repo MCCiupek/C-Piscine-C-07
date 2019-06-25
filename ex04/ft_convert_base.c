@@ -5,119 +5,135 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mciupek <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/21 00:01:51 by mciupek           #+#    #+#             */
-/*   Updated: 2019/06/24 11:27:58 by mciupek          ###   ########.fr       */
+/*   Created: 2019/06/25 15:21:57 by mciupek           #+#    #+#             */
+/*   Updated: 2019/06/25 15:25:49 by mciupek          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <stdlib.h>
 
-char	*ft_putnbr_base(int nbr, char *base, int signe);
+int		ft_tnrvfrr(char *str, char *base);
 
-int		ft_strstr(char *str, char to_find, int k)
+int		base_index(char c, char *base)
 {
-	int		i;
+	int i;
 
-	i = k + 1;
-	while (str[i] != '\0')
+	i = 0;
+	while (base[i])
 	{
-		if (str[i] == to_find)
+		if (base[i] == c)
 			return (i);
 		i++;
 	}
 	return (-1);
 }
 
-int		ft_check_base(char *base)
+int		ft_strlen_strstr(char *str)
 {
-	char	*pet;
-	int		i;
-	int		len_base;
+	int pos;
+	int pos_find;
 
-	len_base = 0;
-	i = 0;
-	pet = "+-\t\n\r\v\f ";
-	while (base[len_base] != '\0')
-		len_base++;
-	while (i <= len_base)
+	pos = 0;
+	if (str[pos] == '\0')
+		return (0);
+	while (str[pos] != '\0')
 	{
-		if (ft_strstr(base, base[i], i) != -1)
+		if (str[pos] == '-' || str[pos] == '+' || str[pos] == ' ' ||
+			str[pos] == '\t' || str[pos] == '\n' || str[pos] == '\r' ||
+			str[pos] == '\v' || str[pos] == '\f')
 			return (0);
-		i++;
+		pos_find = pos + 1;
+		while (str[pos_find] != '\0')
+		{
+			if (str[pos] == str[pos_find])
+				return (0);
+			pos_find++;
+		}
+		pos++;
 	}
-	i = 0;
-	while (i <= 8)
-	{
-		if (ft_strstr(base, pet[i], -1) != -1)
-			return (0);
-		i++;
-	}
-	return (len_base);
+	if (pos < 2)
+		return (0);
+	return (pos);
 }
 
-int		ft_spaces(char *str, char *base)
+int		ft_atoi_base(char *str, char *base)
 {
-	int		i;
+	unsigned int	len_base;
+	int				i;
+	int				sign;
+	int				nb;
 
-	i = 0;
-	while ((ft_strstr(base, str[i], -1) == -1) &&
-			str[i] != '-' && str[i] != '+')
-	{
-		if (str[i] != '\t' && str[i] != '\n' && str[i] != '\v' &&
-				str[i] != '\f' && str[i] != '\r' && str[i] != ' ')
-			return (-1);
-		i++;
-	}
-	return (i);
-}
-
-long	ft_convert(char *str, char *base, int i, int b)
-{
-	int		len_nb;
-	int		b_pow;
-	long	nb;
-
-	len_nb = 0;
-	b_pow = 1;
+	len_base = ft_strlen_strstr(base);
+	if (len_base < 2)
+		return (0);
+	i = ft_tnrvfrr(str, base);
 	nb = 0;
-	while (ft_strstr(base, str[i + len_nb], -1) != -1)
-		len_nb++;
-	while (--len_nb + 1 > 0)
+	sign = 1;
+	if (i == -1)
+		return (0);
+	while (str[i] == '+' || str[i] == '-')
 	{
-		nb = nb + ft_strstr(base, str[i + len_nb], -1) * b_pow;
-		b_pow = b_pow * b;
+		if (str[i] == '-')
+			sign = -sign;
+		i++;
 	}
-	return (nb);
+	while (base_index(str[i], base) >= 0)
+	{
+		nb = (nb * len_base) + base_index(str[i], base);
+		i++;
+	}
+	return (nb * sign);
+}
+
+char	*print_nbr_base(long nb, char *base, int len_base_to, int len_res)
+{
+	char	*res;
+	int		sign;
+
+	sign = 0;
+	if (nb < 0)
+	{
+		nb = -nb;
+		sign = 1;
+	}
+	if (!(res = (char *)malloc(sizeof(char) * (len_res + sign))))
+		return (NULL);
+	res[len_res + sign - 1] = '\0';
+	while (len_res > sign)
+	{
+		res[len_res - 2 + sign] = base[nb % len_base_to];
+		nb = nb / len_base_to;
+		len_res--;
+	}
+	if (sign == 1)
+		res[0] = '-';
+	return (res);
 }
 
 char	*ft_convert_base(char *nbr, char *base_from, char *base_to)
 {
-	int		i;
-	int		signe;
-	int		b;
+	char	*res;
 	long	nb;
-	char	*nbr_char;
+	int		len_base_to;
+	int		len_res;
 
-	nb = 0;
-	i = ft_spaces(nbr, base_from);
-	signe = 0;
-	b = ft_check_base(base_from);
-	if (!nbr[0])
+	if (nbr == NULL)
+		return (NULL);
+	if (!nbr || !base_to || !base_from)
+		return (NULL);
+	if (ft_strlen_strstr(base_from) < 2 || ft_strlen_strstr(base_to) < 2)
+		return (NULL);
+	nb = ft_atoi_base(nbr, base_from);
+	len_base_to = ft_strlen_strstr(base_to);
+	len_res = 2;
+	if (nb < 0)
+		nb = -nb;
+	while (nb / len_base_to > 0)
 	{
-		nbr_char = malloc(sizeof(char) * 1);
-		nbr_char[0] = base_to[0];
-		return (nbr_char);
+		len_res++;
+		nb = nb / len_base_to;
 	}
-	if (b < 2 || i == -1)
-		return (0);
-	while (nbr[i] == '+' || nbr[i] == '-')
-	{
-		if (nbr[i] == '-')
-			signe++;
-		i++;
-	}
-	nb = ft_convert(nbr, base_from, i, b);
-	nbr_char = ft_putnbr_base(nb, base_to, signe % 2);
-	return (nbr_char);
+	nb = ft_atoi_base(nbr, base_from);
+	res = print_nbr_base(nb, base_to, len_base_to, len_res);
+	return (res);
 }
